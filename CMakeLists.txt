@@ -48,6 +48,16 @@ if(GUROBI_FOUND)
 endif()
 
 ##############################################################################
+# Boost Python
+##############################################################################
+find_package(Boost COMPONENTS python3)
+if(Boost_PYTHON3_FOUND)
+    find_package(PythonLibs ${PY_VERSION} REQUIRED)
+    include_directories(${Boost_INCLUDE_DIRS})
+    include_directories(${PYTHON_INCLUDE_DIRS})
+endif()
+
+##############################################################################
 # C++11 support
 ##############################################################################
 include(CheckCXXCompilerFlag)
@@ -176,4 +186,19 @@ if((COMPILER_SUPPORTS_CXX0X OR COMPILER_SUPPORTS_CXX11) AND HDF5_FOUND)
 
     add_executable(solve-lmp-grid-graph src/command-line-tools/solve-lmp-grid-graph.cxx ${headers})
     target_link_libraries(solve-lmp-grid-graph ${HDF5_LIBRARIES} ${GUROBI_LIBRARIES})
+endif()
+
+if(Boost_PYTHON3_FOUND)
+    add_library(graph MODULE bindings/graph.cxx)
+    message(STATUS "BOOST LIBRARIES: ${Boost_LIBRARIES}")
+    message(STATUS "PYTHON LIBRARIES: ${PYTHON_LIBRARIES}")
+    target_link_libraries(graph ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+    set_target_properties(graph PROPERTIES PREFIX "")
+    execute_process(
+        COMMAND python -c 
+        "from distutils.sysconfig import get_python_lib; print(get_python_lib())" 
+        OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "PYTHON INSTALL PATH: ${PYTHON_SITE_PACKAGES}")
+    install(TARGETS graph DESTINATION "${PYTHON_SITE_PACKAGES}")
 endif()
