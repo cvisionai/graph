@@ -267,11 +267,12 @@ void constrainedGreedyAdditiveEdgeContraction(
         // Step 1: find constraints containing merge vertex
         // Step 2: for each of these constraints, check to see if they are in the set containing the stable vertex
         // Step 3: if so, continue
-        auto it = std::find_if(constraint_cp.begin(), constraint_cp.end(),
+        auto it_merge = std::find_if(constraint_cp.begin(), constraint_cp.end(),
             [&merge_vertex](const std::pair<long, long>& element) {
                 return element.first == merge_vertex || element.second == merge_vertex;
             }
         );
+        auto it = it_merge;
         bool constrained = false;
         auto stable_set = partition.find(stable_vertex);
         std::cout << "STABLE SET: " << stable_set << std::endl;
@@ -308,6 +309,16 @@ void constrainedGreedyAdditiveEdgeContraction(
 
         partition.merge(stable_vertex, merge_vertex);
         std::cout << merge_vertex << " WAS MERGED INTO " << stable_vertex << std::endl;
+        
+        while (it_merge != constraint_cp.end()) {
+            if (it_merge->first == merge_vertex) {
+                it_merge->first = stable_vertex;
+            }
+            if (it_merge->second == merge_vertex) {
+                it_merge->second = stable_vertex;
+            }
+            ++it_merge;
+        }
 
         for (auto& p : original_graph_cp.getAdjacentVertices(merge_vertex))
         {
