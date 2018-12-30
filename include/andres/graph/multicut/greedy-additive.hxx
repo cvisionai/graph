@@ -11,7 +11,6 @@
 
 #include "andres/partition.hxx"
 
-#include <iostream> //DELETE ME
 namespace andres {
 namespace graph {
 namespace multicut {
@@ -246,10 +245,6 @@ void constrainedGreedyAdditiveEdgeContraction(
         auto edge = Q.top();
         Q.pop();
 
-        std::cout << "**********************************************" << std::endl;
-        std::cout << "THERE ARE NOW " << partition.numberOfSets() << " SETS" << std::endl;
-        std::cout << "EDGE WITH VERTICES " << edge.a << ", " << edge.b << std::endl;
-
         if (!original_graph_cp.edgeExists(edge.a, edge.b) || edge.edition < edge_editions[edge.a][edge.b])
             continue;
         
@@ -261,12 +256,7 @@ void constrainedGreedyAdditiveEdgeContraction(
 
         if (original_graph_cp.getAdjacentVertices(stable_vertex).size() < original_graph_cp.getAdjacentVertices(merge_vertex).size())
             std::swap(stable_vertex, merge_vertex);
-        std::cout << "MERGE VERTEX: " << merge_vertex << std::endl;
-        std::cout << "STABLE VERTEX: " << stable_vertex << std::endl;
 
-        // Step 1: find constraints containing merge vertex
-        // Step 2: for each of these constraints, check to see if they are in the set containing the stable vertex
-        // Step 3: if so, continue
         auto it_merge = std::find_if(constraint_cp.begin(), constraint_cp.end(),
             [&merge_vertex](const std::pair<long, long>& element) {
                 return element.first == merge_vertex || element.second == merge_vertex;
@@ -275,40 +265,28 @@ void constrainedGreedyAdditiveEdgeContraction(
         auto it = it_merge;
         bool constrained = false;
         auto stable_set = partition.find(stable_vertex);
-        std::cout << "STABLE SET: " << stable_set << std::endl;
         while (it != constraint_cp.end()) 
         {
             if (it->first == merge_vertex) {
-                std::cout << "MERGE VERTEX IS FIRST" << std::endl;
-                std::cout << "SECOND VERTEX IS " << it->second << std::endl;
-                std::cout << "BELONGS TO SET " << partition.find(it->second) << std::endl;
                 if (partition.find(it->second) == stable_set) {
                     constrained = true;
-                    std::cout << "IT IS CONSTRAINED!" << std::endl;
                 }
             }
             if (it->second == merge_vertex) {
-                std::cout << "MERGE VERTEX IS SECOND" << std::endl;
-                std::cout << "FIRST VERTEX IS " << it->first << std::endl;
-                std::cout << "BELONGS TO SET " << partition.find(it->first) << std::endl;
                 if (partition.find(it->first) == stable_set) {
-                    std::cout << "IT IS CONSTRAINED!" << std::endl;
                     constrained = true;
                 }
             }
             if (constrained) {
-                std::cout << "EXITING LOOP" << std::endl;
                 break;
             }
             ++it;
         }
         if (constrained) {
-            std::cout << "CONTINUING TO NEXT Q ELEMENT" << std::endl;
             continue;
         }
 
         partition.merge(stable_vertex, merge_vertex);
-        std::cout << merge_vertex << " WAS MERGED INTO " << stable_vertex << std::endl;
         
         while (it_merge != constraint_cp.end()) {
             if (it_merge->first == merge_vertex) {
