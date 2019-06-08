@@ -195,7 +195,7 @@ if(Boost_PYTHON3_FOUND)
     target_link_libraries(graph ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
     set_target_properties(graph PROPERTIES PREFIX "")
     execute_process(
-        COMMAND python -c 
+        COMMAND python3 -c 
         "from distutils.sysconfig import get_python_lib; print(get_python_lib())" 
         OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE
     )
