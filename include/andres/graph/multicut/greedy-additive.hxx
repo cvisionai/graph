@@ -188,7 +188,9 @@ void constrainedGreedyAdditiveEdgeContraction(
 
         void updateEdgeWeight(size_t a, size_t b, typename EVA::value_type w)
         {
+#pragma omp atomic update
             vertices_[a][b] += w;
+#pragma omp atomic update
             vertices_[b][a] += w;
         }
 
