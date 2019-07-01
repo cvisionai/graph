@@ -302,6 +302,7 @@ void constrainedGreedyAdditiveEdgeContraction(
             ++it_merge;
         }
 
+#pragma omp parallel for loop
         for (auto& p : original_graph_cp.getAdjacentVertices(merge_vertex))
         {
             if (p.first == stable_vertex)
@@ -312,6 +313,7 @@ void constrainedGreedyAdditiveEdgeContraction(
             auto e = Edge(stable_vertex, p.first, original_graph_cp.getEdgeWeight(stable_vertex, p.first));
             e.edition = ++edge_editions[e.a][e.b];
 
+#pragma omp critical(UpdatePriorityQueue)
             Q.push(e);
         }
 
