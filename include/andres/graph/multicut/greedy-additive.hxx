@@ -226,6 +226,7 @@ void constrainedGreedyAdditiveEdgeContraction(
     DynamicGraph original_graph_cp(graph.numberOfVertices());
     std::priority_queue<Edge> Q;
 
+    #pragma omp parallel for
     for (size_t i = 0; i < graph.numberOfEdges(); ++i)
     {
         auto a = graph.vertexOfEdge(i, 0);
