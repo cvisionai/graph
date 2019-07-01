@@ -235,7 +235,8 @@ void constrainedGreedyAdditiveEdgeContraction(
 
         auto e = Edge(a, b, edge_values[i]);
         e.edition = ++edge_editions[e.a][e.b];
-        
+
+#pragma omp critical(UpdatePriorityQueue)
         Q.push(e);
     }
 
