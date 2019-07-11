@@ -31,14 +31,14 @@ BOOST_PYTHON_MODULE(graph) {
     def("greedyAdditiveEdgeContraction",
         &multicut::greedyAdditiveEdgeContraction<
             Graph<>,
-            std::vector<double>,
+            std::vector<float>,
             std::vector<long> 
         >
     );
     def("constrainedGreedyAdditiveEdgeContraction",
         &multicut::constrainedGreedyAdditiveEdgeContraction<
             Graph<>,
-            std::vector<double>,
+            std::vector<float>,
             std::vector<std::pair<long, long> >,
             std::vector<long> 
         >
