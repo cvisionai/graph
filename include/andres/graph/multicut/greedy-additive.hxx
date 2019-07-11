@@ -186,7 +186,7 @@ void constrainedGreedyAdditiveEdgeContraction(
             vertices_[v].clear();
         }
 
-        void updateEdgeWeight(size_t a, size_t b, typename EVA::value_type w)
+      typename EVA::value_type updateEdgeWeight(size_t a, size_t b, typename EVA::value_type w)
         {
           typename EVA::value_type ret;
 #pragma omp critical
