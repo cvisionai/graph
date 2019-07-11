@@ -188,10 +188,13 @@ void constrainedGreedyAdditiveEdgeContraction(
 
         void updateEdgeWeight(size_t a, size_t b, typename EVA::value_type w)
         {
-#pragma omp atomic update
+          typename EVA::value_type ret;
+#pragma omp critical
+          {
             vertices_[a][b] += w;
-#pragma omp atomic update
-            vertices_[b][a] += w;
+            ret = vertices_[b][a] += w;
+          }
+          return ret;
         }
 
     private:
@@ -319,9 +322,9 @@ void constrainedGreedyAdditiveEdgeContraction(
             if (key == stable_vertex)
                 continue;
 
-            original_graph_cp.updateEdgeWeight(stable_vertex, key, value);
+            typename EVA::value_type w = original_graph_cp.updateEdgeWeight(stable_vertex, key, value);
 
-            auto e = Edge(stable_vertex,key, original_graph_cp.getEdgeWeight(stable_vertex, key));
+            auto e = Edge(stable_vertex,key, w);
             e.edition = ++edge_editions[e.a][e.b];
 
 #pragma omp critical(UpdatePriorityQueue)
