@@ -10,6 +10,9 @@ BOOST_PYTHON_MODULE(graph) {
     class_<std::vector<double> >("DoubleVec")
         .def(vector_indexing_suite<std::vector<double> >())
     ;
+    class_<std::vector<float> >("FloatVec")
+        .def(vector_indexing_suite<std::vector<float> >())
+    ;
     class_<std::vector<long> >("LongVec")
         .def(vector_indexing_suite<std::vector<long> >())
     ;
