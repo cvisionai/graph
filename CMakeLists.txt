@@ -23,7 +23,7 @@ enable_testing()
 ##############################################################################
 find_package(Doxygen)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -03")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 ##############################################################################
 # OpenMP
