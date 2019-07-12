@@ -186,7 +186,8 @@ void constrainedGreedyAdditiveEdgeContraction(
             vertices_[v].clear();
         }
 
-      typename EVA::value_type updateEdgeWeight(size_t a, size_t b, typename EVA::value_type w)
+        typename EVA::value_type updateEdgeWeight(size_t a, size_t b,
+                                                  typename EVA::value_type w)
         {
           typename EVA::value_type ret;
 #pragma omp critical
@@ -325,8 +326,15 @@ void constrainedGreedyAdditiveEdgeContraction(
             typename EVA::value_type w = original_graph_cp.updateEdgeWeight(stable_vertex, key, value);
 
             auto e = Edge(stable_vertex,key, w);
-            e.edition = ++edge_editions[e.a][e.b];
-
+	    if (edge_editions[e.a].find(e.b) != edge_editions[e.a].end())
+	    {
+              e.edition = __atomic_add_fetch(&(edge_editions[e.a][e.b]),1,__ATOMIC_ACQ_REL);
+	    }
+	    else
+	    {
+#pragma omp critical(CreateMapElementSafely)
+              e.edition = __atomic_add_fetch(&(edge_editions[e.a][e.b]),1,__ATOMIC_ACQ_REL);
+	    }
 #pragma omp critical(UpdatePriorityQueue)
             Q.push(e);
         }
